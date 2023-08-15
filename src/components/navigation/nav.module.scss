@@ -1,0 +1,22 @@
+@import '../../styles/theme.css';
+@import '../../index';
+.header {
+  background-color: var(--md-sys-color-primary);
+  display: flex;
+  width: 100%;
+  height: 3rem;
+  align-items: center;
+  padding: 0 1rem 0 1rem;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--md-sys-color-on-primary);
+}
+.header_title {
+  font-size: 1rem;
+  font-weight: 600;
+  padding-left: .5rem;
+}
+.header_icon {
+  @include material-icons();
+}
+
+
