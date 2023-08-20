@@ -1,0 +1,116 @@
+@use './styles/material-theme/typography.module.css';
+@import './index';
+
+.app {
+  display: grid;
+  grid-template-rows: 3rem 1fr 3rem;
+  grid-template-columns: 1fr;
+  grid-template-areas: "header" "main" "footer";
+}
+hr {
+  border: 2px solid var(--md-ref-palette-neutral60);
+}
+.app_body {
+  grid-area: main;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 3rem;
+  padding: 2rem 3rem;
+}
+.app_body_col_container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.app_body_row_container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.app_body_row_container > div {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.box_locker_title {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.box_lockerState_text {
+  display: flex;
+  flex-direction: column;
+}
+.box_lockerOrder_btn {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-around;
+}
+.box_lockerOrder_btn_content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 2rem;
+}
+.box_classTimeTable {
+  width: 100%;
+}
+.btn_lockerOrder {
+  display: flex;
+  background-color: var(--md-sys-color-primary);
+  border-radius: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+.horizon_line {
+  width: 100%;
+  border-bottom: 1px solid var(--md-ref-palette-neutral60);
+}
+.box_locker_title > span[class=material-icons] {
+  color: var(--md-sys-color-on-surface-variant);
+}
+.box_locker_title ~ span[class=material-icons] {
+  color: var(--md-sys-color-inverse-surface);
+}
+.text_locker_title {
+  @extend .title-large;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.text_lockState_icon {
+  @include material-icons();
+  color: var(--md-sys-color-on-primary-fixed-variant);
+  font-size: 8rem;
+  font-variation-settings: "FILL" 1;
+}
+.text_lockerState_states {
+  @extend .headline-large;
+  color: var(--md-sys-color-secondary);
+}
+.text_lockerState_content {
+  @extend .headline-small;
+  color: var(--md-sys-color-tertiary);
+}
+.text_lockerOrder_btn_icon {
+  @include material-icons();
+  color: var(--md-sys-color-on-primary);
+  font-variation-settings: "FILL" 1;
+}
+.text_lockerOrder_btn_content {
+  @extend .body-large;
+  color: var(--md-sys-color-on-primary);
+}
+.text_local_clock {
+    @extend .body-large;
+    color: var(--md-sys-color-on-surface-variant);
+}
