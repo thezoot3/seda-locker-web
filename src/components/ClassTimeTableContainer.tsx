@@ -30,7 +30,7 @@ function ClassTimeTableContainer({ uuid }: ClassTimeTableContainerProps) {
         throw new Error('Failed to fetch timetable');
       }
     }
-  }, [uuid]);
+  }, [cache, uuid]);
   return (
     <LoadingBox isReady={timeTable.length > 0}>
       <ClassTimeTable timeTable={timeTable} />

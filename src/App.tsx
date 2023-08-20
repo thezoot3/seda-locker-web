@@ -9,7 +9,7 @@ import LockerInfoContainer from './components/LockerInfoContainer';
 import { lockerContext } from './components/LockerInfoContainer';
 
 function App() {
-  const [selectedLocker, setSelectedLocker] = useState<string>('1234');
+  const [selectedLocker /*, setSelectedLocker*/] = useState<string>('1234');
   return (
     <div className={app.app}>
       <Header />
