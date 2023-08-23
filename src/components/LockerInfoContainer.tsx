@@ -3,52 +3,70 @@ import { LockerData } from '../types';
 import LoadingBox from './loading/LoadingBox';
 
 interface LockerInfoContainerProps {
-  uuid: string | null;
+  uuid?: string | null;
   children: React.ReactNode;
+  fetchAllInfo?: boolean;
 }
 export interface LockerContext {
-  lockerInfo?: LockerData;
+  lockerInfo?: LockerData | LockerData[];
+  fetchAllInfo?: boolean;
   refreshLockerInfo?: () => void;
 }
 export const lockerContext = React.createContext<LockerContext>({});
-function LockerInfoContainer({ uuid, children }: LockerInfoContainerProps) {
-  const [lockerInfo, setLockerInfo] = useState<LockerData>({});
-  const getLockerInfo = useMemo(() => {
-    return (uuid: string) => {
-      async function fetchLockerInfo() {
-        const res = await fetch(`http://localhost/api/lockerState/${uuid}`);
-        if (res.status === 200) {
-          return (await res.json()) as LockerData;
-        } else {
-          throw new Error('Failed to fetch locker info');
+function LockerInfoContainer({ uuid, fetchAllInfo, children }: LockerInfoContainerProps) {
+  const [lockerInfo, setLockerInfo] = useState<LockerData | LockerData[]>();
+  // Function to fetch locker info
+  const fetchLockerInfo = useMemo(() => {
+    return () => {
+      const fetchData = async () => {
+        try {
+          const url = fetchAllInfo
+            ? 'http://api.thezoot3.com/api/lockerState'
+            : `http://api.thezoot3.com/api/lockerState/${uuid}`; // Use uuid if fetchAllInfo is not true
+          const res = await fetch(url);
+          if (res.status === 200) {
+            return await res.json();
+          } else {
+            console.error('Failed to fetch locker info');
+            return undefined;
+          }
+        } catch (error) {
+          console.error(error);
         }
-      }
-      fetchLockerInfo()
-        .then((v) => {
-          setLockerInfo(v);
+      };
+      fetchData()
+        .then((data) => {
+          setLockerInfo(data);
         })
         .catch((e) => {
           console.error(e);
         });
     };
-  }, []);
+  }, [fetchAllInfo, uuid]);
+
+  // Fetch locker info on component mount or when fetchAllInfo changes
+  useEffect(() => {
+    fetchLockerInfo();
+  }, [fetchLockerInfo]);
+
   const prValue = useMemo(() => {
     return {
       lockerInfo: lockerInfo,
       refreshLockerInfo: () => {
-        getLockerInfo(uuid as string);
+        fetchLockerInfo();
       },
+      fetchAllInfo: fetchAllInfo || false,
     };
-  }, [getLockerInfo, lockerInfo, uuid]);
-  useEffect(() => {
-    if (uuid) getLockerInfo(uuid);
-  }, [uuid, getLockerInfo]);
+  }, [fetchAllInfo, fetchLockerInfo, lockerInfo]);
+
   return (
-    <LoadingBox isReady={lockerInfo?.uuid !== undefined} message={uuid ? undefined : '자물쇠를 선택해주십시오'}>
+    //@ts-ignore
+    <LoadingBox isReady={lockerInfo !== undefined} message={uuid ? undefined : '자물쇠를 선택해주십시오'}>
       <lockerContext.Provider value={prValue}>
         <Fragment>{children}</Fragment>
       </lockerContext.Provider>
     </LoadingBox>
   );
 }
+
 export default LockerInfoContainer;

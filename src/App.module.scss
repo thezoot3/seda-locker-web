@@ -66,6 +66,30 @@ hr {
 .box_classTimeTable {
   width: 100%;
 }
+.box_lockerList {
+  width: 100%;
+}
+.box_lockerList_title {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.box_lockerList_item {
+  border-radius: 2rem;
+  padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  background-color: var(--md-sys-color-secondary);
+}
+.box_lockerList_item_text {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
 .btn_lockerOrder {
   display: flex;
   background-color: var(--md-sys-color-primary);
@@ -113,4 +137,30 @@ hr {
 .text_local_clock {
     @extend .body-large;
     color: var(--md-sys-color-on-surface-variant);
+}
+.text_lockerList_title {
+  @extend .display-large;
+  color: var(--md-sys-color-on-surface);
+}
+.text_lockerList_title_icon {
+  @include material-icons();
+    color: var(--md-sys-color-on-surface);
+  font-size: 1.8rem;
+}
+.text_lockerList_item_title_icon {
+  @include material-icons();
+  color: var(--md-sys-color-on-secondary);
+}
+.text_lockerList_item_title {
+  @extend .title-large;
+  color: var(--md-sys-color-on-secondary);
+}
+.text_lockerList_item_icon {
+    @include material-icons();
+  font-size: 1rem;
+    color: var(--md-sys-color-secondary-container);
+}
+.text_lockerList_item_class {
+  @extend .display-medium;
+  color: var(--md-sys-color-secondary-container)
 }

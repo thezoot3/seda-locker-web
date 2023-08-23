@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import app from './App.module.scss';
 import Header from './components/navigation/Header';
 import Footer from './components/navigation/Footer';
@@ -7,6 +7,8 @@ import ClassTimeTableContainer from './components/ClassTimeTableContainer';
 import LocalClock from './components/LocalClock';
 import LockerInfoContainer from './components/LockerInfoContainer';
 import { lockerContext } from './components/LockerInfoContainer';
+import { LockerData } from './types';
+import LockerList from './components/LockerList';
 
 function App() {
   const [selectedLocker /*, setSelectedLocker*/] = useState<string>('1234');
@@ -46,49 +48,61 @@ function App() {
             </div>
             <div className={app.app_body_row_container}>
               <div className={app.box_classTimeTable}>
-                <ClassTimeTableContainer uuid={selectedLocker} />
+                <ClassTimeTableContainer />
               </div>
             </div>
           </div>
         </LockerInfoContainer>
-        <div></div>
+        <LockerInfoContainer fetchAllInfo={true}>
+          <div className={app.app_body_col_container}>
+            <LockerListTitle />
+            <div className={app.box_lockerList}>
+              <LockerList />
+            </div>
+          </div>
+        </LockerInfoContainer>
       </div>
       <Footer />
     </div>
   );
 }
 function LockerTitle() {
-  const { lockerInfo, refreshLockerInfo } = React.useContext(lockerContext);
-  const editNickname = () => {
-    let newNickname = prompt('변경할 이름을 입력해주세요', lockerInfo?.nickname as string);
-    if (newNickname !== lockerInfo?.nickname) {
-      fetch(`http://localhost/api/lockerState/${lockerInfo?.uuid}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nickname: newNickname,
-        }),
-      })
-        .then((res) => {
-          if (res.status === 200) {
-            refreshLockerInfo?.();
-          } else {
-            throw new Error('Failed to fetch locker info');
-          }
+  const lockerCtx = React.useContext(lockerContext);
+  const lockerInfo = useMemo(() => {
+    return lockerCtx.lockerInfo as LockerData;
+  }, [lockerCtx]);
+  const editNickname = useMemo(() => {
+    return () => {
+      let newNickname = prompt('변경할 이름을 입력해주세요', lockerInfo?.nickname as string);
+      if (newNickname !== lockerInfo?.nickname) {
+        fetch(`https://api.thezoot3.com/api/lockerState/${lockerInfo?.uuid}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nickname: newNickname,
+          }),
         })
-        .catch((e) => {
-          console.error(e);
-        });
-      alert('이름이 변경되었습니다.');
-      refreshLockerInfo?.();
-      return;
-    } else {
-      alert('동일한 이름으로 변경할 수 없습니다.');
-      return;
-    }
-  };
+          .then((res) => {
+            if (res.status === 200) {
+              lockerCtx.refreshLockerInfo?.();
+            } else {
+              throw new Error('Failed to fetch locker info');
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+          });
+        alert('이름이 변경되었습니다.');
+        lockerCtx.refreshLockerInfo?.();
+        return;
+      } else {
+        alert('동일한 이름으로 변경할 수 없습니다.');
+        return;
+      }
+    };
+  }, [lockerCtx, lockerInfo]);
   return (
     <div className={app.app_body_row_container}>
       <div>
@@ -99,7 +113,7 @@ function LockerTitle() {
           </span>
         </div>
         <LocalClock style={app.text_local_clock} />
-        <span className={'material-icons'} onClick={refreshLockerInfo}>
+        <span className={'material-icons'} onClick={lockerCtx.refreshLockerInfo}>
           refresh
         </span>
       </div>
@@ -107,5 +121,15 @@ function LockerTitle() {
     </div>
   );
 }
-
+function LockerListTitle() {
+  const lockerCtx = React.useContext(lockerContext);
+  return (
+    <div className={app.box_lockerList_title}>
+      <span className={app.text_lockerList_title}>Locker List</span>
+      <span className={app.text_lockerList_title_icon} onClick={lockerCtx.refreshLockerInfo}>
+        refresh
+      </span>
+    </div>
+  );
+}
 export default App;
