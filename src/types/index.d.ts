@@ -17,5 +17,6 @@ interface LockerData {
   grade?: number;
   classNumber?: number;
   lastSync?: number;
+  onSchedule?: boolean;
 }
 type TimetableByWeekday = Array<Array<ClassTimeData>>;

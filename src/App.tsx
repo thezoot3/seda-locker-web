@@ -11,12 +11,12 @@ import { LockerData } from './types';
 import LockerList from './components/LockerList';
 
 function App() {
-  const [selectedLocker /*, setSelectedLocker*/] = useState<string>('1234');
+  const [selectedLocker, setSelectedLocker] = useState<string>('');
   return (
     <div className={app.app}>
       <Header />
       <div className={app.app_body}>
-        <LockerInfoContainer uuid={selectedLocker}>
+        <LockerInfoContainer uuid={selectedLocker} fetchAllInfo={false}>
           <div className={app.app_body_col_container}>
             <LockerTitle />
             <div className={app.app_body_row_container}>
@@ -28,24 +28,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className={app.app_body_row_container}>
-              <div>
-                <div className={app.box_lockerOrder_btn}>
-                  <div className={app.btn_lockerOrder}>
-                    <div className={app.box_lockerOrder_btn_content}>
-                      <span className={app.text_lockerOrder_btn_icon}>lock_open</span>
-                      <span className={app.text_lockerOrder_btn_content}>잠금해제</span>
-                    </div>
-                  </div>
-                  <div className={app.btn_lockerOrder}>
-                    <div className={app.box_lockerOrder_btn_content}>
-                      <span className={app.text_lockerOrder_btn_icon}>lock_open</span>
-                      <span className={app.text_lockerOrder_btn_content}>잠금해제</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <OrderButton />
             <div className={app.app_body_row_container}>
               <div className={app.box_classTimeTable}>
                 <ClassTimeTableContainer />
@@ -57,7 +40,7 @@ function App() {
           <div className={app.app_body_col_container}>
             <LockerListTitle />
             <div className={app.box_lockerList}>
-              <LockerList />
+              <LockerList setUuid={setSelectedLocker} />
             </div>
           </div>
         </LockerInfoContainer>
@@ -75,7 +58,7 @@ function LockerTitle() {
     return () => {
       let newNickname = prompt('변경할 이름을 입력해주세요', lockerInfo?.nickname as string);
       if (newNickname !== lockerInfo?.nickname) {
-        fetch(`https://api.thezoot3.com/api/lockerState/${lockerInfo?.uuid}`, {
+        fetch(`https://sapi.thezoot3.com/api/lockerState/${lockerInfo?.uuid}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -129,6 +112,51 @@ function LockerListTitle() {
       <span className={app.text_lockerList_title_icon} onClick={lockerCtx.refreshLockerInfo}>
         refresh
       </span>
+    </div>
+  );
+}
+function OrderButton() {
+  const lockerInfo = React.useContext(lockerContext).lockerInfo as LockerData;
+  const lockerCtx = React.useContext(lockerContext);
+  const toggleOpen = useMemo(() => {
+    return () => {
+      fetch(`https://sapi.thezoot3.com/api/orderLocker/${lockerInfo?.uuid}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          task: lockerInfo?.isLocked ? 'open' : 'close',
+        }),
+      }).then(() => {
+        setTimeout(() => {
+          lockerCtx.refreshLockerInfo?.();
+        }, 5000);
+      });
+    };
+  }, [lockerCtx, lockerInfo?.isLocked, lockerInfo?.uuid]);
+  return (
+    <div className={app.app_body_row_container}>
+      <div>
+        <div className={app.box_lockerOrder_btn}>
+          <div className={app.btn_lockerOrder}>
+            <div className={app.box_lockerOrder_btn_content} onClick={toggleOpen}>
+              <span className={app.text_lockerOrder_btn_icon}>{lockerInfo?.isLocked ? 'lock_open' : 'lock'}</span>
+              <span className={app.text_lockerOrder_btn_content}>{lockerInfo?.isLocked ? '잠금 해제' : '잠그기'}</span>
+            </div>
+          </div>
+          <div className={app.btn_lockerOrder}>
+            <div className={app.box_lockerOrder_btn_content}>
+              <span className={app.text_lockerOrder_btn_icon}>
+                {lockerInfo?.onSchedule ? 'event_busy' : 'event_available'}
+              </span>
+              <span className={app.text_lockerOrder_btn_content}>
+                {lockerInfo?.onSchedule ? '잠금 예약 해제' : '잠금 예약'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

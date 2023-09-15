@@ -17,6 +17,7 @@ hr {
   grid-template-columns: 1fr 1fr;
   grid-column-gap: 3rem;
   padding: 2rem 3rem;
+  height: calc(100vh - 6rem);
 }
 .app_body_col_container {
   display: flex;
@@ -83,6 +84,9 @@ hr {
     align-items: center;
     justify-content: space-between;
   background-color: var(--md-sys-color-secondary);
+}
+.box_lockerList_item[data-selected=true] {
+  background-color: var(--md-sys-color-primary);
 }
 .box_lockerList_item_text {
   display: flex;

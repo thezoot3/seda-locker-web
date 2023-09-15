@@ -26,7 +26,7 @@ function ClassTimeTableContainer() {
           console.error(err);
         });
       async function getTimeTable() {
-        const response = await fetch(`http://api.thezoot3.com/api/timetable/${uuid}`);
+        const response = await fetch(`https://sapi.thezoot3.com/api/timetable/${uuid}`);
         if (response.status === 200) {
           return (await response.json()) as TimetableByWeekday;
         } else {

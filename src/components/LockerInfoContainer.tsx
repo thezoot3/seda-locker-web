@@ -20,16 +20,26 @@ function LockerInfoContainer({ uuid, fetchAllInfo, children }: LockerInfoContain
     return () => {
       const fetchData = async () => {
         try {
-          const url = fetchAllInfo
-            ? 'http://api.thezoot3.com/api/lockerState'
-            : `http://api.thezoot3.com/api/lockerState/${uuid}`; // Use uuid if fetchAllInfo is not true
-          const res = await fetch(url);
-          if (res.status === 200) {
-            return await res.json();
-          } else {
-            console.error('Failed to fetch locker info');
-            return undefined;
+          if (fetchAllInfo) {
+            const url = 'https://sapi.thezoot3.com/api/lockerState';
+            const res = await fetch(url);
+            if (res.status === 200) {
+              return await res.json();
+            } else {
+              console.error('Failed to fetch locker info');
+              return undefined;
+            }
+          } else if (uuid) {
+            const url = `https://sapi.thezoot3.com/api/lockerState/${uuid}`;
+            const res = await fetch(url);
+            if (res.status === 200) {
+              return await res.json();
+            } else {
+              console.error('Failed to fetch locker info');
+              return undefined;
+            }
           }
+          return undefined;
         } catch (error) {
           console.error(error);
         }
